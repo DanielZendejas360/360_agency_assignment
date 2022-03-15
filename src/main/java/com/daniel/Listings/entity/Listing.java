@@ -1,22 +1,31 @@
 package com.daniel.Listings.entity;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Table;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
 @Entity
+@Table(name = "Listing")
 public class Listing {
 
     public enum State { draft, published }
 
     @Id
+    @GeneratedValue()
     private UUID id;
 
     private UUID dealerId;
     private String vehicle;
     private int price;
-    private ZonedDateTime date;
+
+    @CreationTimestamp
+    private LocalDateTime createdAt;
     private State state = State.draft;
 
     public UUID getId() {
@@ -51,19 +60,19 @@ public class Listing {
         this.price = price;
     }
 
-    public ZonedDateTime getDate() {
-        return date;
-    }
-
-    public void setDate(ZonedDateTime date) {
-        this.date = date;
-    }
-
     public State getState() {
         return state;
     }
 
     public void setState(State state) {
         this.state = state;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }
