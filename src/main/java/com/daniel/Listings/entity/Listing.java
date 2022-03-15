@@ -73,4 +73,8 @@ public class Listing {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
+
+    public void publish() {
+        setState(State.published);
+    }
 }
