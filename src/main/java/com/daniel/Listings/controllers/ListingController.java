@@ -47,7 +47,7 @@ public class ListingController {
     }
 
     @PostMapping("/listings/{listingId}/unpublish")
-    public void unpublish(@PathVariable UUID listingId) {
-        throw new UnsupportedOperationException();
+    public Listing unpublish(@PathVariable UUID listingId) {
+        return listingService.unpublish(listingId);
     }
 }

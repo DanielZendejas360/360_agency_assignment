@@ -32,4 +32,14 @@ public class ListingService {
         listing.publish();
         return listingRepository.save(listing);
     }
+
+    public Listing unpublish(UUID listingId) {
+        Optional<Listing> listingOptional = listingRepository.findById(listingId);
+        if (listingOptional.isEmpty())
+            throw new IllegalStateException(String.format("Unable to publish listing with id %s. Not found.", listingId));
+
+        Listing listing = listingOptional.get();
+        listing.unpublish();
+        return listingRepository.save(listing);
+    }
 }

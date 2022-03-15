@@ -77,4 +77,8 @@ public class Listing {
     public void publish() {
         setState(State.published);
     }
+
+    public void unpublish() {
+        setState(State.draft);
+    }
 }
