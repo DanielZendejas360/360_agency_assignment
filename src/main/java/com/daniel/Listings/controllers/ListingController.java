@@ -5,6 +5,7 @@ import com.daniel.Listings.services.ListingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -31,13 +32,13 @@ public class ListingController {
     }
 
     @PutMapping("/listings")
-    public void update(@RequestBody Listing listing) {
+    public Listing update(@PathVariable UUID dealerId, @RequestBody Listing listing) {
         throw new UnsupportedOperationException();
     }
 
     @GetMapping("/listings")
-    public void get(@PathVariable UUID dealerId, @RequestParam Listing.State state) {
-        throw new UnsupportedOperationException();
+    public List<Listing> get(@PathVariable UUID dealerId, @RequestParam Listing.State state) {
+        return listingService.getAllWithDealerId(dealerId, state);
     }
 
     @PostMapping("/listings/{listingId}/publish")
