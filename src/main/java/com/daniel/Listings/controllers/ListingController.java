@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/dealers/{dealerId}")
 public class ListingController {
 
     @PostMapping("/listings")
@@ -19,7 +19,7 @@ public class ListingController {
         throw new UnsupportedOperationException();
     }
 
-    @GetMapping("/dealers/{dealerId}/listings")
+    @GetMapping("/listings")
     public void get(@PathVariable UUID dealerId, @RequestParam Listing.State state) {
         throw new UnsupportedOperationException();
     }
