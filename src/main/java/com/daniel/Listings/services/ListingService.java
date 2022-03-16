@@ -1,6 +1,8 @@
 package com.daniel.Listings.services;
 
+import com.daniel.Listings.entity.Dealer;
 import com.daniel.Listings.entity.Listing;
+import com.daniel.Listings.repository.DealerRepository;
 import com.daniel.Listings.repository.ListingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,7 +17,19 @@ public class ListingService {
     @Autowired
     ListingRepository listingRepository;
 
-    public Listing save(Listing listing) {
+    @Autowired
+    DealerRepository dealerRepository;
+
+    @Autowired
+    TierLimitHandler tierLimitHandler;
+
+    public Listing save(Listing listing, TierLimitHandler.Type tierLimitHandling) {
+        Optional<Dealer> dealerOptional = dealerRepository.findById(listing.getDealerId());
+        if (dealerOptional.isEmpty())
+            throw new IllegalStateException(String.format("Dealer %s not found", listing.getDealerId()));
+
+        tierLimitHandler.handle(dealerOptional.get(), listing, tierLimitHandling);
+
         return listingRepository.save(listing);
     }
 

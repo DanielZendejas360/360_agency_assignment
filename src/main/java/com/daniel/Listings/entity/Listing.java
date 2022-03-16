@@ -81,4 +81,8 @@ public class Listing {
     public void unpublish() {
         setState(State.draft);
     }
+
+    public boolean isPublished() {
+        return this.state == State.published;
+    }
 }

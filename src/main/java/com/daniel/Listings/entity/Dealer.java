@@ -12,6 +12,7 @@ public class Dealer {
     private UUID id;
 
     private String name;
+    private int tierLimit;
 
     public UUID getId() {
         return id;
@@ -27,5 +28,13 @@ public class Dealer {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getTierLimit() {
+        return tierLimit;
+    }
+
+    public void setTierLimit(int tierLimit) {
+        this.tierLimit = tierLimit;
     }
 }
