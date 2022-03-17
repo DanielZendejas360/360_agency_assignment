@@ -1,7 +1,6 @@
 package com.daniel.Listings.controllers;
 
 import com.daniel.Listings.entity.Listing;
-import com.daniel.Listings.request.CreateListingRequestBody;
 import com.daniel.Listings.services.ListingService;
 import com.daniel.Listings.services.TierLimitHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +17,7 @@ public class ListingController {
     ListingService listingService;
 
     @PostMapping("/listings")
-    public Listing create(@PathVariable UUID dealerId, @RequestBody CreateListingRequestBody requestBody) {
-        Listing listing = requestBody.getListing();
-
+    public Listing create(@PathVariable UUID dealerId, @RequestBody Listing listing) {
         if (listing.getDealerId() != null && listing.getDealerId() != dealerId) {
             String errorMessage = String.format(
                     "Found mismatching dealer ids in path (%s) and request body (%s)",
@@ -32,7 +29,7 @@ public class ListingController {
         if (listing.getDealerId() == null)
             listing.setDealerId(dealerId);
 
-        return listingService.save(listing, requestBody.getTierLimitHandling());
+        return listingService.save(listing);
     }
 
     @PutMapping("/listings")
