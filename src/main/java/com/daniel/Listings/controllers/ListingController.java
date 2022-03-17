@@ -18,22 +18,13 @@ public class ListingController {
 
     @PostMapping("/listings")
     public Listing create(@PathVariable UUID dealerId, @RequestBody Listing listing) {
-        if (listing.getDealerId() != null && listing.getDealerId() != dealerId) {
-            String errorMessage = String.format(
-                    "Found mismatching dealer ids in path (%s) and request body (%s)",
-                    dealerId,
-                    listing.getDealerId());
-            throw new IllegalArgumentException(errorMessage);
-        }
-
-        if (listing.getDealerId() == null)
-            listing.setDealerId(dealerId);
-
+        listing.setDealerId(dealerId);
         return listingService.save(listing);
     }
 
     @PutMapping("/listings")
     public Listing update(@PathVariable UUID dealerId, @RequestBody Listing listing) {
+
         throw new UnsupportedOperationException();
     }
 
