@@ -28,6 +28,20 @@ public class ListingService {
         return listingRepository.save(listing);
     }
 
+    public Listing update(Listing newListing) {
+        UUID id = newListing.getId();
+        Optional<Listing> listingOptional = listingRepository.findById(id);
+        if (listingOptional.isEmpty())
+            throw new IllegalStateException(
+                    String.format("Unable to update listing with id '%s'. Listing not found.", id));
+
+        Listing updatedListing = listingOptional.get();
+        updatedListing.setVehicle(newListing.getVehicle());
+        updatedListing.setPrice(newListing.getPrice());
+
+        return listingRepository.save(updatedListing);
+    }
+
     public List<Listing> getAllWithDealerId(UUID dealerId, Listing.State state) {
         return listingRepository.findByDealerIdAndState(dealerId, state);
     }
@@ -36,7 +50,7 @@ public class ListingService {
         Optional<Listing> listingOptional = listingRepository.findById(listingId);
         if (listingOptional.isEmpty())
             throw new IllegalStateException(
-                    String.format("Unable to publish listing with id %s. Listing not found.", listingId));
+                    String.format("Unable to publish listing with id '%s'. Listing not found.", listingId));
 
         Listing listing = listingOptional.get();
 

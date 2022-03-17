@@ -19,13 +19,16 @@ public class ListingController {
     @PostMapping("/listings")
     public Listing create(@PathVariable UUID dealerId, @RequestBody Listing listing) {
         listing.setDealerId(dealerId);
+
         return listingService.save(listing);
     }
 
-    @PutMapping("/listings")
-    public Listing update(@PathVariable UUID dealerId, @RequestBody Listing listing) {
+    @PutMapping("/listings/{listingId}")
+    public Listing update(@PathVariable UUID listingId, @PathVariable UUID dealerId, @RequestBody Listing listing) {
+        listing.setId(listingId);
+        listing.setDealerId(dealerId);
 
-        throw new UnsupportedOperationException();
+        return listingService.update(listing);
     }
 
     @GetMapping("/listings")
