@@ -3,14 +3,17 @@ package com.daniel.Listings.services;
 import com.daniel.Listings.entity.Dealer;
 import com.daniel.Listings.entity.Listing;
 import com.daniel.Listings.repository.ListingRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
 public class TierLimitHandler {
+
+    private static final Logger log = LoggerFactory.getLogger(TierLimitHandler.class);
 
     @Autowired
     private ListingRepository listingRepository;
@@ -51,6 +54,9 @@ public class TierLimitHandler {
             return;
 
         Listing oldestPublishedListing = listingRepository.findOldestPublishedListing();
+
+        log.info(String.format("Replacing oldest published listing %s", oldestPublishedListing));
+
         oldestPublishedListing.setState(Listing.State.draft);
         listingRepository.save(oldestPublishedListing);
     }

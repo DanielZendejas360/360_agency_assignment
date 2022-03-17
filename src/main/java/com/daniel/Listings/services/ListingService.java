@@ -4,6 +4,8 @@ import com.daniel.Listings.entity.Dealer;
 import com.daniel.Listings.entity.Listing;
 import com.daniel.Listings.repository.DealerRepository;
 import com.daniel.Listings.repository.ListingRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +15,8 @@ import java.util.UUID;
 
 @Service
 public class ListingService {
+
+    private static final Logger log = LoggerFactory.getLogger(ListingService.class);
 
     @Autowired
     ListingRepository listingRepository;
@@ -25,6 +29,9 @@ public class ListingService {
 
     public Listing save(Listing listing) {
         listing.setState(Listing.State.draft);
+
+        log.info(String.format("Creating listing %s", listing));
+
         return listingRepository.save(listing);
     }
 
@@ -38,6 +45,8 @@ public class ListingService {
         Listing updatedListing = listingOptional.get();
         updatedListing.setVehicle(newListing.getVehicle());
         updatedListing.setPrice(newListing.getPrice());
+
+        log.info(String.format("Updating listing %s", updatedListing));
 
         return listingRepository.save(updatedListing);
     }
@@ -54,8 +63,10 @@ public class ListingService {
 
         Listing listing = listingOptional.get();
 
-        if (listing.isPublished())
+        if (listing.isPublished()) {
+            log.warn(String.format("Tried publishing listing %s but it is already published", listing));
             return listing;
+        }
 
         Optional<Dealer> dealerOptional = dealerRepository.findById(listing.getDealerId());
         if (dealerOptional.isEmpty())
@@ -63,6 +74,8 @@ public class ListingService {
                     String.format("Unable to publish listing for dealer with id %s. Dealer not found.", listing.getDealerId()));
 
         tierLimitHandler.handle(dealerOptional.get(), listing, tierLimitHandling);
+
+        log.info(String.format("Publishing listing %s", listing));
 
         listing.setState(Listing.State.published);
         return listingRepository.save(listing);
@@ -74,6 +87,9 @@ public class ListingService {
             throw new IllegalStateException(String.format("Unable to publish listing with id %s. Not found.", listingId));
 
         Listing listing = listingOptional.get();
+
+        log.info(String.format("Unpublishing listing %s", listing));
+
         listing.setState(Listing.State.draft);
         return listingRepository.save(listing);
     }
