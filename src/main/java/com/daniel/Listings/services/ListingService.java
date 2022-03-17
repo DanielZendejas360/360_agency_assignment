@@ -24,10 +24,6 @@ public class ListingService {
     TierLimitHandler tierLimitHandler;
 
     public Listing save(Listing listing) {
-        Optional<Dealer> dealerOptional = dealerRepository.findById(listing.getDealerId());
-        if (dealerOptional.isEmpty())
-            throw new IllegalStateException(String.format("Dealer %s not found", listing.getDealerId()));
-
         listing.setState(Listing.State.draft);
         return listingRepository.save(listing);
     }
