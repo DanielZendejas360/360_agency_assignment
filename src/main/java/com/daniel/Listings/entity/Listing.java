@@ -13,7 +13,7 @@ public class Listing {
     public enum State { draft, published }
 
     @Id
-    @GeneratedValue()
+    @GeneratedValue
     private UUID id;
 
     private UUID dealerId;
@@ -72,14 +72,6 @@ public class Listing {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
-    }
-
-    public void publish() {
-        setState(State.published);
-    }
-
-    public void unpublish() {
-        setState(State.draft);
     }
 
     public boolean isPublished() {

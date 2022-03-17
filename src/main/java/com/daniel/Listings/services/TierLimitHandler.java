@@ -20,7 +20,7 @@ public class TierLimitHandler {
     public void handle(Dealer dealer, Listing listing, TierLimitHandler.Type tierLimitHandling) {
         switch (tierLimitHandling) {
             case error:
-                throwErrorIfTierLimitIsReached(dealer, listing);
+                throwErrorIfTierLimitIsReached(dealer);
                 break;
             case replaceOldest:
                 replaceOldestIfTierLimitIsReached(dealer, listing);
@@ -28,11 +28,11 @@ public class TierLimitHandler {
         }
     }
 
-    private void throwErrorIfTierLimitIsReached(Dealer dealer, Listing listing) {
+    private void throwErrorIfTierLimitIsReached(Dealer dealer) {
         List<Listing> publishedListings = listingRepository.findByDealerIdAndState(dealer.getId(), Listing.State.published);
 
         boolean tierLimitReached = dealer.getTierLimit() <= publishedListings.size();
-        if (!listing.isPublished() || !tierLimitReached)
+        if (!tierLimitReached)
             return;
 
         throw new IllegalStateException(String.format(
@@ -54,11 +54,13 @@ public class TierLimitHandler {
         for (int i = 1; i < publishedListings.size(); i++) {
             LocalDateTime currentListingCreatedAt = publishedListings.get(i).getCreatedAt();
             LocalDateTime oldestListingCreatedAt = publishedListings.get(oldestPublishedListingIndex).getCreatedAt();
-            if (currentListingCreatedAt.isAfter(oldestListingCreatedAt)) {
+            if (currentListingCreatedAt.isBefore(oldestListingCreatedAt)) {
                 oldestPublishedListingIndex = i;
             }
         }
 
-        publishedListings.set(oldestPublishedListingIndex, newListing);
+        Listing oldestListing = publishedListings.get(oldestPublishedListingIndex);
+        oldestListing.setState(Listing.State.draft);
+        listingRepository.save(oldestListing);
     }
 }

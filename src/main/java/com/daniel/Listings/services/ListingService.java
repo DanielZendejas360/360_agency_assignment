@@ -28,8 +28,7 @@ public class ListingService {
         if (dealerOptional.isEmpty())
             throw new IllegalStateException(String.format("Dealer %s not found", listing.getDealerId()));
 
-        tierLimitHandler.handle(dealerOptional.get(), listing, tierLimitHandling);
-
+        listing.setState(Listing.State.draft);
         return listingRepository.save(listing);
     }
 
@@ -37,13 +36,25 @@ public class ListingService {
         return listingRepository.findByDealerIdAndState(dealerId, state);
     }
 
-    public Listing publish(UUID listingId) {
+    public Listing publish(UUID listingId, TierLimitHandler.Type tierLimitHandling) {
         Optional<Listing> listingOptional = listingRepository.findById(listingId);
         if (listingOptional.isEmpty())
-            throw new IllegalStateException(String.format("Unable to publish listing with id %s. Not found.", listingId));
+            throw new IllegalStateException(
+                    String.format("Unable to publish listing with id %s. Listing not found.", listingId));
 
         Listing listing = listingOptional.get();
-        listing.publish();
+
+        if (listing.isPublished())
+            return listing;
+
+        Optional<Dealer> dealerOptional = dealerRepository.findById(listing.getDealerId());
+        if (dealerOptional.isEmpty())
+            throw new IllegalStateException(
+                    String.format("Unable to publish listing for dealer with id %s. Dealer not found.", listing.getDealerId()));
+
+        tierLimitHandler.handle(dealerOptional.get(), listing, tierLimitHandling);
+
+        listing.setState(Listing.State.published);
         return listingRepository.save(listing);
     }
 
@@ -53,7 +64,7 @@ public class ListingService {
             throw new IllegalStateException(String.format("Unable to publish listing with id %s. Not found.", listingId));
 
         Listing listing = listingOptional.get();
-        listing.unpublish();
+        listing.setState(Listing.State.draft);
         return listingRepository.save(listing);
     }
 }

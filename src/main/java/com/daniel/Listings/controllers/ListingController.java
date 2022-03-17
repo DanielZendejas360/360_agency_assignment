@@ -46,8 +46,8 @@ public class ListingController {
     }
 
     @PostMapping("/listings/{listingId}/publish")
-    public Listing publish(@PathVariable UUID listingId) {
-        return listingService.publish(listingId);
+    public Listing publish(@PathVariable UUID listingId, @RequestParam TierLimitHandler.Type tierLimitHandling) {
+        return listingService.publish(listingId, tierLimitHandling);
     }
 
     @PostMapping("/listings/{listingId}/unpublish")
