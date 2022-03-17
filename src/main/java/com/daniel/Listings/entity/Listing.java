@@ -1,5 +1,6 @@
 package com.daniel.Listings.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
@@ -74,6 +75,7 @@ public class Listing {
         this.createdAt = createdAt;
     }
 
+    @JsonIgnore
     public boolean isPublished() {
         return this.state == State.published;
     }

@@ -50,17 +50,8 @@ public class TierLimitHandler {
         if (publishedListings.size() == 0)
             return;
 
-        int oldestPublishedListingIndex = 0;
-        for (int i = 1; i < publishedListings.size(); i++) {
-            LocalDateTime currentListingCreatedAt = publishedListings.get(i).getCreatedAt();
-            LocalDateTime oldestListingCreatedAt = publishedListings.get(oldestPublishedListingIndex).getCreatedAt();
-            if (currentListingCreatedAt.isBefore(oldestListingCreatedAt)) {
-                oldestPublishedListingIndex = i;
-            }
-        }
-
-        Listing oldestListing = publishedListings.get(oldestPublishedListingIndex);
-        oldestListing.setState(Listing.State.draft);
-        listingRepository.save(oldestListing);
+        Listing oldestPublishedListing = listingRepository.findOldestPublishedListing();
+        oldestPublishedListing.setState(Listing.State.draft);
+        listingRepository.save(oldestPublishedListing);
     }
 }

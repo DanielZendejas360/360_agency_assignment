@@ -1,6 +1,7 @@
 package com.daniel.Listings.repository;
 
 import com.daniel.Listings.entity.Listing;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -11,4 +12,7 @@ import java.util.UUID;
 public interface ListingRepository extends CrudRepository<Listing, UUID> {
 
     List<Listing> findByDealerIdAndState(UUID dealerId, Listing.State state);
+
+    @Query(value = "SELECT * FROM listing WHERE state = 'published' ORDER BY created_at ASC LIMIT 1", nativeQuery = true)
+    Listing findOldestPublishedListing();
 }
