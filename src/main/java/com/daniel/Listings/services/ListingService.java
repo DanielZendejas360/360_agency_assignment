@@ -2,6 +2,7 @@ package com.daniel.Listings.services;
 
 import com.daniel.Listings.entity.Dealer;
 import com.daniel.Listings.entity.Listing;
+import com.daniel.Listings.exception.ResourceNotFoundException;
 import com.daniel.Listings.repository.DealerRepository;
 import com.daniel.Listings.repository.ListingRepository;
 import org.slf4j.Logger;
@@ -39,7 +40,7 @@ public class ListingService {
         UUID id = newListing.getId();
         Optional<Listing> listingOptional = listingRepository.findById(id);
         if (listingOptional.isEmpty())
-            throw new IllegalStateException(
+            throw new ResourceNotFoundException(
                     String.format("Unable to update listing with id '%s'. Listing not found.", id));
 
         Listing updatedListing = listingOptional.get();
@@ -58,7 +59,7 @@ public class ListingService {
     public Listing publish(UUID listingId, TierLimitHandler.Type tierLimitHandling) {
         Optional<Listing> listingOptional = listingRepository.findById(listingId);
         if (listingOptional.isEmpty())
-            throw new IllegalStateException(
+            throw new ResourceNotFoundException(
                     String.format("Unable to publish listing with id '%s'. Listing not found.", listingId));
 
         Listing listing = listingOptional.get();
@@ -70,7 +71,7 @@ public class ListingService {
 
         Optional<Dealer> dealerOptional = dealerRepository.findById(listing.getDealerId());
         if (dealerOptional.isEmpty())
-            throw new IllegalStateException(
+            throw new ResourceNotFoundException(
                     String.format("Unable to publish listing for dealer with id %s. Dealer not found.", listing.getDealerId()));
 
         tierLimitHandler.handle(dealerOptional.get(), listing, tierLimitHandling);
@@ -84,7 +85,7 @@ public class ListingService {
     public Listing unpublish(UUID listingId) {
         Optional<Listing> listingOptional = listingRepository.findById(listingId);
         if (listingOptional.isEmpty())
-            throw new IllegalStateException(String.format("Unable to publish listing with id %s. Not found.", listingId));
+            throw new ResourceNotFoundException(String.format("Unable to publish listing with id %s. Not found.", listingId));
 
         Listing listing = listingOptional.get();
 

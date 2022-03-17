@@ -2,6 +2,7 @@ package com.daniel.Listings.services;
 
 import com.daniel.Listings.entity.Dealer;
 import com.daniel.Listings.entity.Listing;
+import com.daniel.Listings.exception.TierLimitReachedException;
 import com.daniel.Listings.repository.ListingRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +39,7 @@ public class TierLimitHandler {
         if (!tierLimitReached)
             return;
 
-        throw new IllegalStateException(String.format(
+        throw new TierLimitReachedException(String.format(
                 "Tier limit reached. Current published listings are %d and the dealer's tier limit is %d",
                 publishedListings.size(),
                 dealer.getTierLimit()));
