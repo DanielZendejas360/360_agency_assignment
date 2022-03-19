@@ -1,13 +1,15 @@
 package com.daniel.Listings.exception;
 
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Map;
 
 @ControllerAdvice
 public class ControllerExceptionHandler {
@@ -24,5 +26,10 @@ public class ControllerExceptionHandler {
         HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
         ErrorResponseBody errorResponseBody = new ErrorResponseBody(httpStatus.value(), e.getMessage(), LocalDateTime.now());
         return new ResponseEntity<>(errorResponseBody, httpStatus);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public void handleConstraintViolationError(HttpServletResponse response) throws IOException {
+        response.sendError(HttpStatus.BAD_REQUEST.value());
     }
 }

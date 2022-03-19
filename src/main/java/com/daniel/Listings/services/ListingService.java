@@ -28,7 +28,7 @@ public class ListingService {
     @Autowired
     TierLimitHandler tierLimitHandler;
 
-    public Listing save(Listing listing) {
+    public Listing create(Listing listing) {
         listing.setState(Listing.State.draft);
 
         log.info(String.format("Creating listing %s", listing));
@@ -52,7 +52,7 @@ public class ListingService {
         return listingRepository.save(updatedListing);
     }
 
-    public List<Listing> getAllWithDealerId(UUID dealerId, Listing.State state) {
+    public List<Listing> getAllWithDealerIdAndSstate(UUID dealerId, Listing.State state) {
         return listingRepository.findByDealerIdAndState(dealerId, state);
     }
 

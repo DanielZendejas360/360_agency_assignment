@@ -5,6 +5,8 @@ import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -20,7 +22,11 @@ public class Listing {
     private UUID id;
 
     private UUID dealerId;
+
+    @NotEmpty
     private String vehicle;
+
+    @Min(0)
     private int price;
 
     @CreationTimestamp
