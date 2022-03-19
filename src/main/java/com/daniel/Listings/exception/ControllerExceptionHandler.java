@@ -27,9 +27,4 @@ public class ControllerExceptionHandler {
         ErrorResponseBody errorResponseBody = new ErrorResponseBody(httpStatus.value(), e.getMessage(), LocalDateTime.now());
         return new ResponseEntity<>(errorResponseBody, httpStatus);
     }
-
-    @ExceptionHandler(ConstraintViolationException.class)
-    public void handleConstraintViolationError(HttpServletResponse response) throws IOException {
-        response.sendError(HttpStatus.BAD_REQUEST.value());
-    }
 }

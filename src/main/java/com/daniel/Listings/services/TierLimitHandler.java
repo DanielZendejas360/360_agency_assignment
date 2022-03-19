@@ -41,19 +41,16 @@ public class TierLimitHandler {
         if (!tierLimitReached)
             return;
 
-            throw new TierLimitReachedException(String.format(
-                "Tier limit reached. Current published listings are %d and the dealer's tier limit is %d",
-                publishedListings.size(),
-                dealer.getTierLimit()));
+        throw new TierLimitReachedException(String.format(
+            "Tier limit reached. Current published listings are %d and the dealer's tier limit is %d",
+            publishedListings.size(),
+            dealer.getTierLimit()));
     }
 
     private void replaceOldestIfTierLimitIsReached(Dealer dealer, Listing newListing) {
         List<Listing> publishedListings = listingRepository.findByDealerIdAndState(dealer.getId(), Listing.State.published);
 
         if (dealer.getTierLimit() > publishedListings.size())
-            return;
-
-        if (publishedListings.size() == 0)
             return;
 
         Listing oldestPublishedListing = listingRepository.findOldestPublishedListing();
