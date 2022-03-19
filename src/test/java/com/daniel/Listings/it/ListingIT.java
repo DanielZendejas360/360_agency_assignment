@@ -51,7 +51,7 @@ public class ListingIT {
     }
 
     @Test
-    public void create_withValidRequest_returns201AndCorrectlyStoresListingInDB() {
+    public void create_withValidRequest_returns201AndStoresListingInDB() {
         Listing requestListing = new Listing();
         requestListing.setVehicle("Vehicle");
         requestListing.setPrice(100_000);
@@ -124,7 +124,7 @@ public class ListingIT {
     }
 
     @Test
-    public void update_withValidRequest_returns200AndCorrectlyStoresUpdateInDB() {
+    public void update_withValidRequest_returns200AndStoresUpdateInDB() {
         Listing listing = new Listing();
         listing.setDealerId(dealer.getId());
         listing.setVehicle("Vehicle");
@@ -276,7 +276,7 @@ public class ListingIT {
     }
 
     @Test
-    public void publish_whenTierLimitHasNoBeenReached_returns200AndPublishesListing() {
+    public void publish_whenTierLimitHasNotBeenReached_returns200AndPublishesListing() {
         Listing draftListing = new Listing();
         draftListing.setDealerId(dealer.getId());
         draftListing.setVehicle("Unpublished Test Vehicle");
@@ -344,7 +344,7 @@ public class ListingIT {
     }
 
     @Test
-    public void publish_whenTierLimitHasBeenReachedAndClientRequestsOldestReplacement_returns200AndReplaceOldest() {
+    public void publish_whenTierLimitHasBeenReachedAndClientRequestsOldestReplacement_returns200AndReplacesOldest() {
         Listing publishedListing1 = new Listing();
         publishedListing1.setDealerId(dealer.getId());
         publishedListing1.setVehicle("Published Test Vehicle");
@@ -389,7 +389,38 @@ public class ListingIT {
         assertThat(responseListing.getState()).isEqualTo(Listing.State.published);
 
         Optional<Listing> oldestPublishedListingOptional = listingRepository.findById(publishedListing1.getId());
+        assertThat(oldestPublishedListingOptional.isPresent());
         Listing oldestPublishedListing = oldestPublishedListingOptional.get();
         assertThat(oldestPublishedListing.getState()).isEqualTo(Listing.State.draft);
+    }
+
+    @Test
+    public void unpublish_withValidRequest_returns200AndUnpublishesListing() {
+        Listing publishedListing = new Listing();
+        publishedListing.setDealerId(dealer.getId());
+        publishedListing.setVehicle("Published Test Vehicle");
+        publishedListing.setPrice(100_000);
+        publishedListing.setState(Listing.State.published);
+
+        UUID publishedListingId = listingRepository.save(publishedListing).getId();
+
+        Listing responseListing = webClient.post()
+                .uri(uriBuilder -> uriBuilder
+                        .path(ApiPaths.LISTINGS_UNPUBLISH)
+                        .queryParam("tierLimitHandling", TierLimitHandler.Type.replaceOldest)
+                        .build(dealer.getId(), publishedListingId))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(Listing.class)
+                .returnResult()
+                .getResponseBody();
+
+        assertThat(responseListing).isNotNull();
+        assertThat(responseListing.getState()).isEqualTo(Listing.State.draft);
+
+        Optional<Listing> listingInDbOptional = listingRepository.findById(publishedListingId);
+        assertThat(listingInDbOptional.isPresent());
+        Listing listingInDb = listingInDbOptional.get();
+        assertThat(listingInDb.getState()).isEqualTo(Listing.State.draft);
     }
 }
