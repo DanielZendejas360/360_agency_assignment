@@ -5,7 +5,7 @@ import com.daniel.Listings.entity.Listing;
 import com.daniel.Listings.exception.ResourceNotFoundException;
 import com.daniel.Listings.services.ListingService;
 import com.daniel.Listings.services.TierLimitHandler;
-import com.daniel.Listings.util.ApiEndpoints;
+import com.daniel.Listings.util.ApiPaths;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +48,7 @@ public class ListingControllerTest {
                 "\"price\": " + price +
         "}";
 
-        mockMvc.perform(post(ApiEndpoints.LISTINGS_CREATE, dealerId)
+        mockMvc.perform(post(ApiPaths.LISTINGS_CREATE, dealerId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
                 .andExpect(status().isCreated());
@@ -63,17 +63,17 @@ public class ListingControllerTest {
 
     @Test
     public void create_whenRequestBodyIsInvalid_returns400() throws Exception {
-        mockMvc.perform(post(ApiEndpoints.LISTINGS_CREATE, UUID.randomUUID())
+        mockMvc.perform(post(ApiPaths.LISTINGS_CREATE, UUID.randomUUID())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"invalid\": \"body\"}"))
                 .andExpect(status().isBadRequest());
 
-        mockMvc.perform(post(ApiEndpoints.LISTINGS_CREATE, UUID.randomUUID())
+        mockMvc.perform(post(ApiPaths.LISTINGS_CREATE, UUID.randomUUID())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"vehicle\": \"\", \"price\": 100000}"))
                 .andExpect(status().isBadRequest());
 
-        mockMvc.perform(post(ApiEndpoints.LISTINGS_CREATE, UUID.randomUUID())
+        mockMvc.perform(post(ApiPaths.LISTINGS_CREATE, UUID.randomUUID())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"vehicle\": \"Vehicle Name\", \"price\": -1}"))
                 .andExpect(status().isBadRequest());
@@ -89,7 +89,7 @@ public class ListingControllerTest {
                 " \"price\": 100000" +
         "}";
 
-        mockMvc.perform(put(ApiEndpoints.LISTINGS_UPDATE, dealerId, listingId)
+        mockMvc.perform(put(ApiPaths.LISTINGS_UPDATE, dealerId, listingId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
                 .andExpect(status().isOk());
@@ -112,7 +112,7 @@ public class ListingControllerTest {
                 " \"price\": 100000" +
         "}";
 
-        mockMvc.perform(put(ApiEndpoints.LISTINGS_UPDATE, UUID.randomUUID(), UUID.randomUUID())
+        mockMvc.perform(put(ApiPaths.LISTINGS_UPDATE, UUID.randomUUID(), UUID.randomUUID())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
                 .andExpect(status().isNotFound());
@@ -120,7 +120,7 @@ public class ListingControllerTest {
 
     @Test
     public void update_whenRequestBodyIsInvalid_returns400() throws Exception {
-        mockMvc.perform(put(ApiEndpoints.LISTINGS_UPDATE, UUID.randomUUID(), UUID.randomUUID())
+        mockMvc.perform(put(ApiPaths.LISTINGS_UPDATE, UUID.randomUUID(), UUID.randomUUID())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"invalid\": \"body\"}"))
                 .andExpect(status().isBadRequest());
@@ -139,9 +139,9 @@ public class ListingControllerTest {
         listing.setState(State.draft);
         listing.setCreatedAt(LocalDateTime.now());
 
-        when(listingService.getAllWithDealerIdAndSstate(dealerId, state)).thenReturn(List.of(listing));
+        when(listingService.getAllWithDealerIdAndState(dealerId, state)).thenReturn(List.of(listing));
 
-        mockMvc.perform(get(ApiEndpoints.LISTINGS_GET_BY_DEALER_AND_STATE, dealerId)
+        mockMvc.perform(get(ApiPaths.LISTINGS_GET_BY_DEALER_AND_STATE, dealerId)
                 .queryParam("state", State.draft.toString()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(listing.getId().toString()))
@@ -155,24 +155,24 @@ public class ListingControllerTest {
     public void getByDealerIdAndState_whenDealerIdDoesNotExist_returns404() throws Exception {
         UUID dealerId = UUID.randomUUID();
 
-        when(listingService.getAllWithDealerIdAndSstate(eq(dealerId), any(State.class)))
+        when(listingService.getAllWithDealerIdAndState(eq(dealerId), any(State.class)))
                 .thenThrow(new ResourceNotFoundException("Dealer id not found"));
 
-        mockMvc.perform(get(ApiEndpoints.LISTINGS_GET_BY_DEALER_AND_STATE, dealerId)
+        mockMvc.perform(get(ApiPaths.LISTINGS_GET_BY_DEALER_AND_STATE, dealerId)
                 .queryParam("state", State.draft.toString()))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     public void getByDealerIdAndState_whenStateIsInvalid_returns400() throws Exception {
-        mockMvc.perform(get(ApiEndpoints.LISTINGS_GET_BY_DEALER_AND_STATE, UUID.randomUUID())
+        mockMvc.perform(get(ApiPaths.LISTINGS_GET_BY_DEALER_AND_STATE, UUID.randomUUID())
                 .queryParam("state", "invalid_state"))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     public void getByDealerIdAndState_whenDealerIdIsInvalid_returns400() throws Exception {
-        mockMvc.perform(get(ApiEndpoints.LISTINGS_GET_BY_DEALER_AND_STATE, "invalid_id")
+        mockMvc.perform(get(ApiPaths.LISTINGS_GET_BY_DEALER_AND_STATE, "invalid_id")
                 .queryParam("state", State.published.toString()))
                 .andExpect(status().isBadRequest());
     }
@@ -181,7 +181,7 @@ public class ListingControllerTest {
     public void publish_withValidRequests_returns200() throws Exception {
         UUID listingId = UUID.randomUUID();
 
-        mockMvc.perform(post(ApiEndpoints.LISTINGS_PUBLISH, UUID.randomUUID(), listingId)
+        mockMvc.perform(post(ApiPaths.LISTINGS_PUBLISH, UUID.randomUUID(), listingId)
                 .queryParam("tierLimitHandling", TierLimitHandler.Type.error.toString()))
                 .andExpect(status().isOk());
 
@@ -200,18 +200,18 @@ public class ListingControllerTest {
         when(listingService.publish(any(UUID.class), any(TierLimitHandler.Type.class)))
                 .thenThrow(new ResourceNotFoundException("Resource not found"));
 
-        mockMvc.perform(post(ApiEndpoints.LISTINGS_PUBLISH, UUID.randomUUID(), UUID.randomUUID())
+        mockMvc.perform(post(ApiPaths.LISTINGS_PUBLISH, UUID.randomUUID(), UUID.randomUUID())
                 .queryParam("tierLimitHandling", TierLimitHandler.Type.error.toString()))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     public void publish_whenRequestIsInvalid_returns400() throws Exception {
-        mockMvc.perform(post(ApiEndpoints.LISTINGS_PUBLISH, UUID.randomUUID(), "InvalidUUID")
+        mockMvc.perform(post(ApiPaths.LISTINGS_PUBLISH, UUID.randomUUID(), "InvalidUUID")
                 .queryParam("tierLimitHandling", TierLimitHandler.Type.error.toString()))
                 .andExpect(status().isBadRequest());
 
-        mockMvc.perform(post(ApiEndpoints.LISTINGS_PUBLISH, UUID.randomUUID(), UUID.randomUUID())
+        mockMvc.perform(post(ApiPaths.LISTINGS_PUBLISH, UUID.randomUUID(), UUID.randomUUID())
                 .queryParam("tierLimitHandling", "InvalidType"))
                 .andExpect(status().isBadRequest());
     }
@@ -220,7 +220,7 @@ public class ListingControllerTest {
     public void unpublish_withValidRequests_returns200() throws Exception {
         UUID listingId = UUID.randomUUID();
 
-        mockMvc.perform(post(ApiEndpoints.LISTINGS_UNPUBLISH, UUID.randomUUID(), listingId))
+        mockMvc.perform(post(ApiPaths.LISTINGS_UNPUBLISH, UUID.randomUUID(), listingId))
                 .andExpect(status().isOk());
 
         ArgumentCaptor<UUID> argumentCaptorForListingId = ArgumentCaptor.forClass(UUID.class);
@@ -235,13 +235,13 @@ public class ListingControllerTest {
         when(listingService.unpublish(any(UUID.class)))
                 .thenThrow(new ResourceNotFoundException("Resource not found"));
 
-        mockMvc.perform(post(ApiEndpoints.LISTINGS_UNPUBLISH, UUID.randomUUID(), UUID.randomUUID()))
+        mockMvc.perform(post(ApiPaths.LISTINGS_UNPUBLISH, UUID.randomUUID(), UUID.randomUUID()))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     public void unpublish_whenRequestIsInvalid_returns400() throws Exception {
-        mockMvc.perform(post(ApiEndpoints.LISTINGS_UNPUBLISH, UUID.randomUUID(), "InvalidUUID"))
+        mockMvc.perform(post(ApiPaths.LISTINGS_UNPUBLISH, UUID.randomUUID(), "InvalidUUID"))
                 .andExpect(status().isBadRequest());
     }
 }

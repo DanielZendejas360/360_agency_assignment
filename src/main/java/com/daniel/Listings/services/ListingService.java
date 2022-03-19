@@ -31,6 +31,11 @@ public class ListingService {
     public Listing create(Listing listing) {
         listing.setState(Listing.State.draft);
 
+        Optional<Dealer> dealerOptional = dealerRepository.findById(listing.getDealerId());
+        if (dealerOptional.isEmpty())
+            throw new ResourceNotFoundException(
+                    String.format("Unable to create listing. Dealer with id %s not found" , listing.getDealerId()));
+
         log.info(String.format("Creating listing %s", listing));
 
         return listingRepository.save(listing);
@@ -52,7 +57,7 @@ public class ListingService {
         return listingRepository.save(updatedListing);
     }
 
-    public List<Listing> getAllWithDealerIdAndSstate(UUID dealerId, Listing.State state) {
+    public List<Listing> getAllWithDealerIdAndState(UUID dealerId, Listing.State state) {
         return listingRepository.findByDealerIdAndState(dealerId, state);
     }
 

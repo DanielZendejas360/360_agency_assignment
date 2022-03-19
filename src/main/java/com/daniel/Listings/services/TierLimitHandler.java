@@ -35,6 +35,8 @@ public class TierLimitHandler {
     private void throwErrorIfTierLimitIsReached(Dealer dealer) {
         List<Listing> publishedListings = listingRepository.findByDealerIdAndState(dealer.getId(), Listing.State.published);
 
+        System.out.println(publishedListings);
+
         boolean tierLimitReached = dealer.getTierLimit() <= publishedListings.size();
         if (!tierLimitReached)
             return;

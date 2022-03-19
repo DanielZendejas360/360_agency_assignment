@@ -3,7 +3,7 @@ package com.daniel.Listings.controllers;
 import com.daniel.Listings.entity.Listing;
 import com.daniel.Listings.services.ListingService;
 import com.daniel.Listings.services.TierLimitHandler;
-import com.daniel.Listings.util.ApiEndpoints;
+import com.daniel.Listings.util.ApiPaths;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -18,32 +18,33 @@ public class ListingController {
     @Autowired
     ListingService listingService;
 
-    @PostMapping(ApiEndpoints.LISTINGS_CREATE)
+    @PostMapping(ApiPaths.LISTINGS_CREATE)
     @ResponseStatus(HttpStatus.CREATED)
     public Listing create(@PathVariable UUID dealerId, @Valid @RequestBody Listing listing) {
         listing.setDealerId(dealerId);
+
         return listingService.create(listing);
     }
 
-    @PutMapping(ApiEndpoints.LISTINGS_UPDATE)
-    public Listing update(@PathVariable UUID listingId, @PathVariable UUID dealerId, @Valid @RequestBody Listing listing) {
+    @PutMapping(ApiPaths.LISTINGS_UPDATE)
+    public Listing update(@PathVariable UUID dealerId, @PathVariable UUID listingId, @Valid @RequestBody Listing listing) {
         listing.setId(listingId);
         listing.setDealerId(dealerId);
 
         return listingService.update(listing);
     }
 
-    @GetMapping(ApiEndpoints.LISTINGS_GET_BY_DEALER_AND_STATE)
+    @GetMapping(ApiPaths.LISTINGS_GET_BY_DEALER_AND_STATE)
     public List<Listing> getByDealerIdAndState(@PathVariable UUID dealerId, @RequestParam Listing.State state) {
-        return listingService.getAllWithDealerIdAndSstate(dealerId, state);
+        return listingService.getAllWithDealerIdAndState(dealerId, state);
     }
 
-    @PostMapping(ApiEndpoints.LISTINGS_PUBLISH)
+    @PostMapping(ApiPaths.LISTINGS_PUBLISH)
     public Listing publish(@PathVariable UUID listingId, @RequestParam TierLimitHandler.Type tierLimitHandling) {
         return listingService.publish(listingId, tierLimitHandling);
     }
 
-    @PostMapping(ApiEndpoints.LISTINGS_UNPUBLISH)
+    @PostMapping(ApiPaths.LISTINGS_UNPUBLISH)
     public Listing unpublish(@PathVariable UUID listingId) {
         return listingService.unpublish(listingId);
     }
