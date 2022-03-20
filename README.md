@@ -1,31 +1,31 @@
-#Listings API (360.Agency Backend assignment)
+# Listings API (360.Agency Backend assignment)
 
-##Summary
+## Summary
 RESTful service in charge of managing vehicle dealers and listings.
 
-It's main duties are to create, update, publish and unpublish listings. Also,
+Its main duties are to create, update, publish and unpublish listings. Also,
 it can return all listings of a vehicle dealer with a given state. It contains
 business logic to prevent a vehicle dealer to surpass their tier limit.
 
-Currently, functionality related to dealers is limited to creation and updates.
+Currently, functionality related to dealers is limited to creation.
 
-##Requirements
+## Requirements
 - Maven 3
 - Java 11 or above
 - Docker for integration tests. The project uses [TestContainers](https://www.testcontainers.org/)
 
-##How to start
-###With Docker
+## How to start
+### With Docker
 1. Execute `mvn clean install` in the root of the project. This will result in
    a JAR file under the `target/` folder.
 2. Execute `docker-compose up --build`. As can be seen in the Dockerfile, the
    JAR from the previous step will be copied and executed, starting the
    application.
 
-###Without Docker
+### Without Docker
 1. Execute `mvn clean install` in the root of the project. This will result in
    a JAR file under the `target/` folder.
-2. Start a Postgres instance with [pg_ctl](https://www.postgresql.org/docs/10/app-pg-ctl.html)
+2. Start a Postgres instance with [pg_ctl](https://www.postgresql.org/docs/10/app-pg-ctl.html). If you use OSX try replacing `{datadir}` with `/usr/local/var/postgres`:
    ```
    pg_ctl -D {datadir} start
    ```
@@ -34,9 +34,9 @@ Currently, functionality related to dealers is limited to creation and updates.
    java -jar target/Listings-0.0.1-SNAPSHOT.jar
    ```
 
-##Usage
+## Usage
 The following commands execute a series of requests to the service. It is
-designed to touch on all functionalities the service.
+designed to touch on all of the service's features.
 
 Refer to the section "How to start" for instructions on how to get the
 service up and running
@@ -84,8 +84,8 @@ curl -XPOST http://localhost:8080/api/v1/dealers/$VD_ID/listings/paste_id4_here/
 curl -XPOST http://localhost:8080/api/v1/dealers/$VD_ID/listings/paste_id4_here/publish?tierLimitHandling=replaceOldest
 ```
 
-##API Reference
-###Entities
+## API Reference
+### Entities
 
-###Endpoints
+### Endpoints
 
