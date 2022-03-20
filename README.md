@@ -38,8 +38,15 @@ Currently, functionality related to dealers is limited to creation.
 The following commands execute a series of requests to the service. It is
 designed to touch on all of the service's features.
 
+You can keep track of the changes in the database by connecting to it and
+inspecting the tables `dealer` and `listing` with the following command. When
+prompted for the password type `postgres`:
+```
+psql -h localhost -U postgres
+```
+
 Refer to the section "How to start" for instructions on how to get the
-service up and running
+service up and running.
 ```
 # Let's start by creating a vehicle dealer
 curl http://localhost:8080/api/v1/dealers -H 'Content-Type:application/json' -d'{"name": "Test Dealer", "tierLimit": 3}'
