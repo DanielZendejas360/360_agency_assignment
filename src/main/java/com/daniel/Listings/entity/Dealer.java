@@ -6,6 +6,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
 import java.util.UUID;
 
 /**
@@ -22,6 +24,9 @@ public class Dealer {
     @GeneratedValue
     private UUID id;
 
+    @NotEmpty
     private String name;
+
+    @Min(0)
     private int tierLimit;
 }
