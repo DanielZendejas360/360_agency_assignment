@@ -25,7 +25,6 @@ public class DealerService {
 
         Dealer updatedDealer = dealerOptional.get();
         updatedDealer.setName(newDealer.getName());
-        updatedDealer.setTierLimit(newDealer.getTierLimit());
         return dealerRepository.save(updatedDealer);
     }
 }

@@ -92,7 +92,6 @@ public class DealerIT {
         Dealer editedDealer = new Dealer();
         editedDealer.setId(dealerId);
         editedDealer.setName("New Name Dealer");
-        editedDealer.setTierLimit(5);
 
         Dealer responseDealer = webClient.put()
                 .uri(uriBuilder -> uriBuilder
@@ -108,12 +107,10 @@ public class DealerIT {
 
         assertThat(responseDealer).isNotNull();
         assertThat(responseDealer.getName()).isEqualTo(editedDealer.getName());
-        assertThat(responseDealer.getTierLimit()).isEqualTo(editedDealer.getTierLimit());
 
         Optional<Dealer> dealerInDbOptional = dealerRepository.findById(responseDealer.getId());
         assertThat(dealerInDbOptional.isPresent());
         assertThat(dealerInDbOptional.get().getName()).isEqualTo(editedDealer.getName());
-        assertThat(dealerInDbOptional.get().getTierLimit()).isEqualTo(editedDealer.getTierLimit());
     }
 
     @Test
@@ -145,20 +142,6 @@ public class DealerIT {
         editedDealer.setId(dealerId);
         editedDealer.setName("");
         editedDealer.setTierLimit(5);
-
-        webClient.put()
-                .uri(uriBuilder -> uriBuilder
-                        .path(ApiPaths.DEALERS_UPDATE)
-                        .build(UUID.randomUUID()))
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(editedDealer)
-                .exchange()
-                .expectStatus().isBadRequest();
-
-        editedDealer = new Dealer();
-        editedDealer.setId(dealerId);
-        editedDealer.setName("Test Name");
-        editedDealer.setTierLimit(-1);
 
         webClient.put()
                 .uri(uriBuilder -> uriBuilder
