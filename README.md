@@ -13,6 +13,7 @@ Currently, functionality related to dealers is limited to creation.
 - Maven 3
 - Java 11 or above
 - Docker for integration tests. The project uses [TestContainers](https://www.testcontainers.org/)
+- Postgres 13 if Docker is not available
 
 ## How to start
 ### With Docker
