@@ -68,7 +68,7 @@ public class TierLimitHandler {
         if (dealer.getTierLimit() > publishedListings.size())
             return;
 
-        Listing oldestPublishedListing = listingRepository.findOldestPublishedListing();
+        Listing oldestPublishedListing = listingRepository.findOldestPublishedListing(dealer.getId());
 
         log.info(String.format("Replacing oldest published listing %s", oldestPublishedListing));
 

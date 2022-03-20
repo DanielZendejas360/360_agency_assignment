@@ -13,6 +13,6 @@ public interface ListingRepository extends CrudRepository<Listing, UUID> {
 
     List<Listing> findByDealerIdAndState(UUID dealerId, Listing.State state);
 
-    @Query(value = "SELECT * FROM listing WHERE state = 'published' ORDER BY created_at ASC LIMIT 1", nativeQuery = true)
-    Listing findOldestPublishedListing();
+    @Query(value = "SELECT * FROM listing WHERE state = 'published' AND dealer_id = ?1 ORDER BY created_at ASC LIMIT 1", nativeQuery = true)
+    Listing findOldestPublishedListing(UUID id);
 }
