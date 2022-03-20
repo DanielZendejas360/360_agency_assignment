@@ -10,6 +10,9 @@ import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * A vehicle ad, owned by a {@link Dealer}.
+ */
 @Data
 @Entity
 @Table(name = "Listing")

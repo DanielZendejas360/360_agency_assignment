@@ -8,6 +8,12 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.UUID;
 
+/**
+ * The owner of listings. The field <code>tierLimit</code> represents the maximum number of published ads the dealer
+ * can have at the same time.
+ *
+ * @see Listing
+ */
 @Data
 @Entity
 @Table(name = "Dealer")

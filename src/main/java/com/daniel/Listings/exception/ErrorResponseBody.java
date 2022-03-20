@@ -4,6 +4,9 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
+/**
+ * Error message to be sent back to the client if an exception was caught in the {@link com.daniel.Listings.controllers.ListingController}.
+ */
 @Data
 public class ErrorResponseBody {
     private int statusCode;

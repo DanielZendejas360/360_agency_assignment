@@ -11,6 +11,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+/**
+ * In charge of deciding what to do when a publish request goes over the tier limit of a dealer.
+ */
 @Component
 public class TierLimitHandler {
 
@@ -21,6 +24,20 @@ public class TierLimitHandler {
 
     public enum Type { error, replaceOldest }
 
+    /**
+     * Handles the case where the tier limit has been reached. Currently there are two ways to handle this:
+     * <ul>
+     *     <li><b>Throw an error.</b> If the tier limit has been reached then an TierLimitReachedException is thrown.</li>
+     *     <li><b>Replace the oldest published listing with the new one.</b> We search for the listing with the oldest
+     *     <code>created_at</code> timestamp, set its state to "draft" and then publish the new one. This is an
+     *     attempt to keep the dealer's published listings under their tier limit.</li>
+     * <ul/>
+     *
+     * @see TierLimitReachedException
+     * @param dealer The Dealer object that is publishing the listing
+     * @param listing The Listing object to be published
+     * @param tierLimitHandling An enum value representing what decision should be taken if the tier limit is reached.
+     */
     public void handle(Dealer dealer, Listing listing, TierLimitHandler.Type tierLimitHandling) {
         switch (tierLimitHandling) {
             case error:
@@ -34,8 +51,6 @@ public class TierLimitHandler {
 
     private void throwErrorIfTierLimitIsReached(Dealer dealer) {
         List<Listing> publishedListings = listingRepository.findByDealerIdAndState(dealer.getId(), Listing.State.published);
-
-        System.out.println(publishedListings);
 
         boolean tierLimitReached = dealer.getTierLimit() <= publishedListings.size();
         if (!tierLimitReached)
