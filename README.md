@@ -77,8 +77,8 @@ curl -XPOST http://localhost:8080/api/v1/dealers/$VD_ID/listings/paste_id3_here/
 
 # Let's fetch the listings.
 # The query parameter "state" allows "draft" and "published".
-curl http://localhost:8080/api/v1/dealers//listings?state=draft
-curl http://localhost:8080/api/v1/dealers//listings?state=published
+curl http://localhost:8080/api/v1/dealers/$VD_ID/listings?state=draft
+curl http://localhost:8080/api/v1/dealers/$VD_ID/listings?state=published
 
 # Let's try to exceed the tier limit.
 # This will showcase the two ways this service handles that case.
